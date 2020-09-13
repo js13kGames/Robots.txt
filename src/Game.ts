@@ -105,6 +105,17 @@ export const createRobot = () => {
     return new Robot(width, height, skew, thickness);
 };
 
+const updateMultiplierDom = (multiplier: number) => {
+    const container = <HTMLDivElement>document.querySelector('#multiplier-container');
+    if (multiplier <= 1) {
+        container.classList.add('hidden');
+    } else {
+        container.classList.remove('hidden');
+        const number = <HTMLDivElement>document.querySelector('#multiplier');
+        number.innerText = multiplier.toString();
+    }
+};
+
 export const createGame = () => {
     const updateRankingValue = () => {
         const bar = <HTMLDivElement>document.querySelector('#ranking-bar__filled');
@@ -131,14 +142,7 @@ export const createGame = () => {
         state.multiplier = newValue;
         multiplierTime = currentStep + 10 * STEPS_PER_SECOND;
 
-        const container = <HTMLDivElement>document.querySelector('#multiplier-container');
-        if (state.multiplier <= 1) {
-            container.classList.add('hidden');
-        } else {
-            container.classList.remove('hidden');
-            const number = <HTMLDivElement>document.querySelector('#multiplier');
-            number.innerText = state.multiplier.toString();
-        }
+        updateMultiplierDom(state.multiplier);
     };
 
     const tick = () => {
