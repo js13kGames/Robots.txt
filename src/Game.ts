@@ -20,6 +20,7 @@ interface GameState {
         fellOnSearch: boolean;
     };
     ranking: number;
+    multiplier: number;
 }
 
 const resize = () => {
@@ -123,20 +124,20 @@ export const createGame = () => {
     };
 
     const updateMultiplier = (newValue: number) => {
-        if (multiplierTime >= currentStep && newValue <= multiplier) {
+        if (multiplierTime >= currentStep && newValue <= state.multiplier) {
             return;
         }
 
-        multiplier = newValue;
+        state.multiplier = newValue;
         multiplierTime = currentStep + 10 * STEPS_PER_SECOND;
 
         const container = <HTMLDivElement>document.querySelector('#multiplier-container');
-        if (multiplier <= 1) {
+        if (state.multiplier <= 1) {
             container.classList.add('hidden');
         } else {
             container.classList.remove('hidden');
             const number = <HTMLDivElement>document.querySelector('#multiplier');
-            number.innerText = multiplier.toString();
+            number.innerText = state.multiplier.toString();
         }
     };
 
@@ -151,7 +152,7 @@ export const createGame = () => {
                         state.ranking -= 3;
                     } else {
                         state.ranking = Math.min(100, state.ranking + 10);
-                        updateScore(score + 10 * multiplier);
+                        updateScore(score + 10 * state.multiplier);
                     }
                 }
 
@@ -194,13 +195,9 @@ export const createGame = () => {
     let currentStep: number = 0;
     let score: number;
     let combo: number;
-    let multiplier: number = 1;
     let comboTime: number;
     let multiplierTime: number;
     let nextRankingDeterioration;
-
-    updateScore(0);
-    updateMultiplier(1);
 
     const state: GameState = {
         paused: false,
@@ -213,6 +210,7 @@ export const createGame = () => {
         finalSpawnInterval: 0.5 * STEPS_PER_SECOND,
         lastUrlDelete: null,
         ranking: 100,
+        multiplier: 1,
     };
 
     const animate = (currentTime: number) => {
@@ -237,13 +235,11 @@ export const createGame = () => {
             newUrl.code = game.spawnUrlCode();
             state.urls.add(newUrl);
 
-            const progress = between(0, 1, currentStep / (60 * STEPS_PER_SECOND));
-
             if (state.robot.dead) {
                 newUrl.speed.x = (Math.random() - 0.5) * 1000 * SPEED_UNIT;
                 state.nextSpawn += 0.02 * STEPS_PER_SECOND;
             } else {
-                state.nextSpawn += state.initialSpawnInterval + (state.finalSpawnInterval - state.initialSpawnInterval) * progress;
+                game.scheduleNextSpawn();
             }
         }
 
@@ -252,7 +248,7 @@ export const createGame = () => {
             game.deteriorateRanking();
         }
 
-        if (multiplier > 0 && multiplierTime < currentStep) {
+        if (state.multiplier > 0 && multiplierTime < currentStep) {
             updateMultiplier(comboTime >= currentStep ? combo : 1);
         }
 
@@ -273,6 +269,8 @@ export const createGame = () => {
             nextRankingDeterioration = currentStep + 0.2 * STEPS_PER_SECOND;
             state.robot.position.x = WORLD_SIZE / 2;
             state.robot.position.y = WORLD_SIZE * 0.83;
+            updateScore(0);
+            updateMultiplier(1);
             render(state);
         },
 
@@ -301,6 +299,11 @@ export const createGame = () => {
         deteriorateRanking: () => {
             const progress = between(0, 1, currentStep / (120 * STEPS_PER_SECOND));
             game.state.ranking -= 0.5 + 2 * progress;
+        },
+
+        scheduleNextSpawn: () => {
+            const progress = between(0, 1, currentStep / (60 * STEPS_PER_SECOND));
+            state.nextSpawn += state.initialSpawnInterval + (state.finalSpawnInterval - state.initialSpawnInterval) * progress;
         },
 
         end: () => {

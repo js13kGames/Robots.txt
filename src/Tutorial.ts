@@ -65,7 +65,11 @@ export const start = () => {
         condition: () => game.state.lastUrlDelete && game.state.lastUrlDelete.fellOnSearch,
 
         message: () => `
-            <p>When a 200 URL falls on the Search engine the ranking is increased.</p>
+            <p>
+                When a 200 URL falls on the Search engine the ranking
+                <br>
+                is increased, and you earn score points.
+            </p>
         `,
 
         focus: () => game.state.lastUrlDelete.url.position,
@@ -98,14 +102,37 @@ export const start = () => {
 
         message: () => `
             <h3>Good job!</h3>
-            <p>This is the end of the tutorial.</p>
+            <p>Get rid of 404 URLs quickly to make a combo.</p>
         `,
 
         focus: () => game.state.lastUrlDelete.url.position,
 
-        next: () => null,
+        next: () => comboStep,
     };
 
+    const comboStep = {
+        condition: () => game.state.multiplier >= 2,
+
+        message: () => `
+            <p>During a combo every score point you earn will be multiplied.</p>
+        `,
+
+        focus: () => new Vector2D(WORLD_SIZE * 0.95, WORLD_SIZE * 0.24),
+
+        next: () => endStep,
+    };
+
+    const endStep = {
+        condition: () => true,
+
+        message: () => `
+            <p>This is the end of the tutorial.</p>
+        `,
+
+        focus: () => null,
+
+        next: () => null,
+    };
 
     let step = introStep;
 
@@ -163,7 +190,7 @@ export const start = () => {
             return 200;
         }
 
-        if (step === url404Step || step === url404ThrownStep) {
+        if (step === url404Step || step === url404ThrownStep || step === comboStep || step === endStep) {
             return 404;
         }
 
@@ -178,9 +205,17 @@ export const start = () => {
         }
     };
 
+    game.scheduleNextSpawn = () => {
+        if (step === comboStep || step === endStep) {
+            game.state.nextSpawn += 1 * STEPS_PER_SECOND;
+        } else {
+            game.state.nextSpawn += 5 * STEPS_PER_SECOND;
+        }
+    };
+
     game.afterEnd = () => {
         if (LocalStorage.get().playedTutorial) {
-            document.querySelector('#menu').classList.remove('hidden');
+            setTimeout(() => document.querySelector('#menu').classList.remove('hidden'), 2000);
         } else {
             LocalStorage.update(storage => storage.playedTutorial = true);
             (<HTMLDivElement>document.querySelector('#menu__tutorial')).style.display = 'initial';
@@ -199,8 +234,6 @@ export const start = () => {
     requestAnimationFrame((currentTime: number) => {
         const startDelay = 1000;
         game.state.nextSpawn = 5 * STEPS_PER_SECOND;
-        game.state.initialSpawnInterval = 5 * STEPS_PER_SECOND;
-        game.state.finalSpawnInterval = 5 * STEPS_PER_SECOND;
         game.initialize(currentTime + startDelay);
         window.requestAnimationFrame(game.loop);
     });
