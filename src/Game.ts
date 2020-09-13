@@ -106,14 +106,23 @@ export const createRobot = () => {
 };
 
 const updateMultiplierDom = (multiplier: number) => {
-    const container = <HTMLDivElement>document.querySelector('#multiplier-container');
-    if (multiplier <= 1) {
-        container.classList.add('hidden');
-    } else {
-        container.classList.remove('hidden');
+    const transform = <HTMLDivElement>document.querySelector('#multiplier-transform');
+
+    if (multiplier > 1) {
+        transform.classList.remove('animate');
+        transform.getClientRects(); // force reflow
+        window.requestAnimationFrame(() => transform.classList.add('animate'));
+
         const number = <HTMLDivElement>document.querySelector('#multiplier');
         number.innerText = multiplier.toString();
     }
+};
+
+const animateCombo = () => {
+    const combo = <HTMLDivElement>document.querySelector('#multiplier-combo');
+    combo.classList.remove('animate');
+    combo.getClientRects(); // force reflow
+    window.requestAnimationFrame(() => combo.classList.add('animate'));
 };
 
 export const createGame = () => {
@@ -130,6 +139,9 @@ export const createGame = () => {
 
     const increaseCombo = () => {
         combo = comboTime >= currentStep ? combo + 1 : 1;
+        if (combo > 1) {
+            animateCombo();
+        }
         comboTime = currentStep + 3 * STEPS_PER_SECOND;
         updateMultiplier(combo);
     };
