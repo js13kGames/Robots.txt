@@ -22,7 +22,13 @@ export class Robot
     head: Circle;
     headRelative = new Vector2D(0, 30);
 
-    constructor (public readonly width: number, public readonly height: number, public readonly skew: number, public readonly thickness) {
+    constructor (
+        public readonly width: number,
+        public readonly height: number,
+        public readonly skew: number,
+        public readonly thickness: number,
+        public readonly color: string
+    ) {
         this.head = new Circle(50, new Vector2D(0, 0));
 
         const points1 = [
@@ -45,8 +51,8 @@ export class Robot
 
         this.polygons = [
             new RenderablePolygon(this.position, points2, 'white'),
-            new RenderablePolygon(this.position, points1, '#08f'),
-            new RenderablePolygon(this.position, points3, '#08f'),
+            new RenderablePolygon(this.position, points1, color),
+            new RenderablePolygon(this.position, points3, color),
         ];
 
 

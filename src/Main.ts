@@ -49,12 +49,14 @@ const updateRobotPreview = () => {
     const skew = parseValue(document.querySelector('#skew'));
     const thickness = parseValue(document.querySelector('#thickness'));
     const height = parseValue(document.querySelector('#height'));
+    const color = parseValue(document.querySelector('#color'));
     LocalStorage.update(storage => {
         storage.robotSettings = {
             width,
             skew,
             thickness,
             height,
+            color,
         }
     });
 
@@ -91,3 +93,26 @@ const isTouchDevice = () => {
 if (isTouchDevice()) {
     (<HTMLDivElement>document.querySelector('#game__abort')).style.display = 'initial';
 }
+
+const enableSubscriberOnly = () => {
+    document.querySelectorAll('.subscriber-only').forEach(element => element.classList.remove('subscriber-only'));
+};
+
+const initializeMonetization = () => {
+    try {
+        const monetization = (document as any).monetization;
+
+        if (!monetization) {
+            return;
+        }
+
+        monetization.addEventListener('monetizationstart', () => {
+            if (monetization.state === 'started') {
+                enableSubscriberOnly();
+            }
+        });
+    } catch (error) {
+        console.error('Failed to initialize monetization', error);
+    }
+};
+initializeMonetization();

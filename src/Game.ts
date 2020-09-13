@@ -101,8 +101,9 @@ export const createRobot = () => {
     const skew = width * (0.1 + 0.3 * settings.skew);
     const thickness = width * (0.1 + 0.2 * settings.thickness);
     const height = thickness + 10 + 90 * settings.height;
+    const color = `hsl(${Math.round(settings.color * 255)}, 75%, 47%)`;
 
-    return new Robot(width, height, skew, thickness);
+    return new Robot(width, height, skew, thickness, color);
 };
 
 const updateMultiplierDom = (multiplier: number) => {

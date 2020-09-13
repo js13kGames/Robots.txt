@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8"/>
         <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' />
-        <meta name="monetization" content="$ilp.uphold.com/6BxK6eqyD9qZ">
+        <meta name="monetization" content="$ilp.uphold.com/6BxK6eqyD9qZ" />
         <title>robots.txt</title>
         <style>
             * {
@@ -55,7 +55,8 @@
 
             #title {
                 font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-                font-size: 15vmin;
+                font-size: 12vmin;
+                margin-top: 0;
             }
 
             #menu__tutorial {
@@ -81,8 +82,14 @@
             }
 
             #settings {
+                font-size: 2.5vmin;
+                display: flex;
+            }
+
+            #settings__grid {
                 display: grid;
-                grid-template-columns: auto auto auto;
+                grid-template-columns: auto auto;
+                align-items: center;
                 gap: 0 5vmin;
             }
 
@@ -93,7 +100,11 @@
                 grid-column-start: 3;
                 grid-column-end: 3;
                 grid-row-start: 1;
-                grid-row-end: 5;
+                grid-row-end: 6;
+                margin: 0.5vmin;
+                margin-left: 3vmin;
+
+                box-shadow: 0 0 0 0.3vmin #dadce0;
             }
 
             #game {
@@ -324,6 +335,10 @@
                 font-size: 2vmin;
                 align-items: center;
             }
+
+            .subscriber-only {
+                display: none;
+            }
         </style>
     </head>
     <body>
@@ -373,19 +388,24 @@
 
             <h2>fine tune your robots.txt</h2>
             <div id="settings" class="text-right">
+                <div id="settings__grid">
+                    <div>size</div>
+                    <input id="size" type="range"/>
+
+                    <div>height</div>
+                    <input id="height" type="range"/>
+
+                    <div>thickness</div>
+                    <input id="thickness" type="range"/>
+
+                    <div>skew</div>
+                    <input id="skew" type="range"/>
+
+                    <div class="subscriber-only">color</div>
+                    <input class="subscriber-only" id="color" type="range"/>
+                </div>
+
                 <canvas id="robot-preview"></canvas>
-
-                <div>size</div>
-                <input id="size" type="range"/>
-
-                <div>height</div>
-                <input id="height" type="range"/>
-
-                <div>thickness</div>
-                <input id="thickness" type="range"/>
-
-                <div>skew</div>
-                <input id="skew" type="range"/>
             </div>
         </div>
 

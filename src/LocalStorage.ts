@@ -6,6 +6,7 @@ interface LocalStorageData {
         skew: number;
         thickness: number;
         height: number;
+        color: number;
     };
 }
 
@@ -29,6 +30,7 @@ export const LocalStorage = {
                     skew: 0.5,
                     thickness: 0.5,
                     height: 0.5,
+                    color: 0.5,
                 }
             };
         }
